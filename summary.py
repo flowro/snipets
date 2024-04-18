@@ -45,3 +45,38 @@ passages = [
 query = "Tell me about App1."
 summary = generate_summary(query)
 print(summary)
+
+
+##################################
+###################################
+#####################################
+
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+
+# Load the model and tokenizer
+model = T5ForConditionalGeneration.from_pretrained('t5-base')
+tokenizer = T5Tokenizer.from_pretrained('t5-base')
+
+# Function to generate a formal paragraph from metadata
+def generate_formal_paragraph(app_name, owner, risk_level, other_details):
+    # Create a prompt with a formal tone request
+    prompt = f"translate to formal English: Application Name: {app_name}. Owner: {owner}. Risk Level: {risk_level}. Details: {other_details}."
+    
+    # Encode the prompt and generate output
+    input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+    outputs = model.generate(input_ids, max_length=200)
+    
+    # Decode and print the summary
+    formal_paragraph = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return formal_paragraph
+
+# Example metadata
+app_name = "App1"
+owner = "Alice"
+risk_level = "High"
+other_details = "Used for managing client data and transactions."
+
+# Generate and print the formal paragraph
+formal_paragraph = generate_formal_paragraph(app_name, owner, risk_level, other_details)
+print(formal_paragraph)
+
